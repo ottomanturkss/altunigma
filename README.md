@@ -1,4 +1,4 @@
-# Web-Based Wallet Scanner
+# Altunigma v1.0.1 [Beta] Web-Based Wallet Scanner
 
 A powerful web application for scanning and managing Ethereum wallets directly in your browser. This tool allows you to generate new mnemonic phrases, scan existing wallets, and check token balances using any Ethereum RPC endpoint. The application can be run both locally and on a hosted server.
 
