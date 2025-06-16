@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Altunigma v1.0.1 [Beta] - Ethereum Wallet Scanner & Crypto Recovery Tool</title>
+    
+    <!-- Base Path Meta Tag -->
+    <meta name="base-path" content="<%= basePath %>">
+    
+    <!-- Debug Info (Remove in production) -->
+    <script>
+        console.log("Base Path from server:", "<%= basePath %>");
+    </script>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Altunigma is a powerful Ethereum wallet scanning tool for generating and recovering crypto wallets. Scan mnemonic phrases, find missing words, and check balances across multiple blockchains.">
+    <meta name="keywords" content="ethereum wallet scanner, crypto wallet recovery, mnemonic phrase generator, bitcoin wallet scanner, blockchain tool, wallet address finder, crypto recovery tool, altunigma, ethereum, bitcoin, cryptocurrency, wallet, blockchain, mnemonic, private key, wallet address, crypto scanner">
+    <meta name="author" content="Onur Altun">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://onuraltun.tr/walletscanner">
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:title" content="Altunigma - Ethereum Wallet Scanner & Crypto Recovery Tool">
+    <meta property="og:description" content="Generate and scan mnemonic phrases, recover partial mnemonics, and check wallet balances across multiple blockchains with this powerful crypto tool.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://onuraltun.tr/walletscanner">
+    <meta property="og:site_name" content="Altunigma">
+    
+    <!-- Twitter Card data -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Altunigma - Ethereum Wallet Scanner & Crypto Recovery Tool">
+    <meta name="twitter:description" content="Generate and scan mnemonic phrases, recover partial mnemonics, and check wallet balances across multiple blockchains.">
+    
+    <!-- Structured Data for Rich Snippets -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Altunigma",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "A powerful Ethereum wallet scanning tool for generating and recovering crypto wallets. Scan mnemonic phrases, find missing words, and check balances across multiple blockchains.",
+      "author": {
+        "@type": "Person",
+        "name": "Onur Altun",
+        "email": "petabyte64@gmail.com"
+      },
+      "version": "1.0.1 Beta",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "url": "https://onuraltun.tr/walletscanner"
+      },
+      "potentialAction": {
+        "@type": "ContactAction",
+        "name": "Contact",
+        "email": "petabyte64@gmail.com"
+      }
+    }
+    </script>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="<%= basePath %>/css/styles.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h1 class="h3 mb-0"><i class="bi bi-wallet2"></i> Altunigma v1.0.1 [Beta]</h1>
+                    </div>
+                    <div class="card-body">
+                        <ul class="nav nav-tabs mb-4" id="scannerTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="regular-tab" data-bs-toggle="tab" data-bs-target="#regular" type="button" role="tab" aria-controls="regular" aria-selected="true">Regular Scan</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="auto-tab" data-bs-toggle="tab" data-bs-target="#auto" type="button" role="tab" aria-controls="auto" aria-selected="false">Auto Scanner</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="target-tab" data-bs-toggle="tab" data-bs-target="#target" type="button" role="tab" aria-controls="target" aria-selected="false">Offline Target Scan</button>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content" id="scannerTabsContent">
+                            <!-- Regular Scan Tab -->
+                            <div class="tab-pane fade show active" id="regular" role="tabpanel" aria-labelledby="regular-tab">
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <div class="card h-100">
+                                            <div class="card-header">
+                                                <h5 class="mb-0">Generate Mnemonic</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <form id="generateForm">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Word Count</label>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio" name="wordCount" id="wordCount12" value="12" checked>
+                                                            <label class="form-check-label" for="wordCount12">12 Words</label>
+                                                        </div>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio" name="wordCount" id="wordCount24" value="24">
+                                                            <label class="form-check-label" for="wordCount24">24 Words</label>
+                                                        </div>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary">Generate</button>
+                                                </form>
+                                                <div class="mt-3" id="generatedMnemonic" style="display: none;">
+                                                    <div class="alert alert-info">
+                                                        <p class="mb-1"><strong>Generated Mnemonic:</strong></p>
+                                                        <p id="mnemonicText" class="mb-0 user-select-all"></p>
+                                                    </div>
+                                                    <button id="useMnemonic" class="btn btn-sm btn-success">Use This Mnemonic</button>
+                                                    <button id="copyMnemonic" class="btn btn-sm btn-secondary">Copy</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card h-100">
+                                            <div class="card-header">
+                                                <h5 class="mb-0">Scan Wallet</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <form id="scanForm">
+                                                    <div class="mb-3">
+                                                        <label for="mnemonic" class="form-label">Mnemonic Phrase</label>
+                                                        <textarea class="form-control" id="mnemonic" rows="3" placeholder="Enter your 12 or 24 word mnemonic phrase" required></textarea>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="rpcUrl" class="form-label required-field">RPC URL</label>
+                                                        <input type="text" class="form-control" id="rpcUrl" placeholder="e.g., https://mainnet.infura.io/v3/YOUR_API_KEY" required>
+                                                        <small class="form-text text-muted">Enter a valid RPC URL to connect to the Ethereum network</small>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="numAddresses" class="form-label">Number of Addresses</label>
+                                                        <input type="number" class="form-control" id="numAddresses" min="1" max="50" value="5">
+                                                    </div>
+                                                    <div class="mb-3 form-check">
+                                                        <input type="checkbox" class="form-check-input" id="scanTokens" checked>
+                                                        <label class="form-check-label" for="scanTokens">Scan for ERC-20 Token Balances</label>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary">Scan Wallet</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Auto Scanner Tab -->
+                            <div class="tab-pane fade" id="auto" role="tabpanel" aria-labelledby="auto-tab">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Auto Scanner - Fill in Missing Words</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="text-muted mb-3">
+                                            Enter your partial mnemonic phrase with placeholders for missing words. Use "_" (underscore) 
+                                            for each word you want to be randomly generated. The system will try different combinations.
+                                        </p>
+                                        
+                                        <form id="autoScanForm">
+                                            <div class="row">
+                                                <div class="col-md-12 mb-3">
+                                                    <label class="form-label">Mnemonic Template (12 or 24 words)</label>
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <select id="wordCountAuto" class="form-select me-2" style="width: auto;">
+                                                            <option value="12">12 Words</option>
+                                                            <option value="24">24 Words</option>
+                                                        </select>
+                                                        <button type="button" id="createTemplateBtn" class="btn btn-outline-secondary">Create Template</button>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-12 mb-3">
+                                                    <div id="mnemonicTemplate" class="d-none">
+                                                        <!-- Word inputs will be generated here -->
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="rpcUrlAuto" class="form-label required-field">RPC URL</label>
+                                                    <input type="text" class="form-control" id="rpcUrlAuto" placeholder="e.g., https://mainnet.infura.io/v3/YOUR_API_KEY" required>
+                                                    <small class="form-text text-muted">Enter a valid RPC URL to connect to the Ethereum network</small>
+                                                </div>
+                                                
+                                                <div class="col-md-3 mb-3">
+                                                    <label for="numAddressesAuto" class="form-label">Addresses to Check</label>
+                                                    <input type="number" class="form-control" id="numAddressesAuto" min="1" max="10" value="1">
+                                                </div>
+                                                
+                                                <div class="col-md-3 mb-3">
+                                                    <label for="maxCombinations" class="form-label">Max Combinations</label>
+                                                    <input type="text" class="form-control" id="maxCombinations" placeholder="Infinite" value="">
+                                                    <small class="form-text text-muted">Leave empty for infinite scanning, or enter a number to limit</small>
+                                                </div>
+                                                
+                                                <div class="col-12 mb-3">
+                                                    <div class="form-check">
+                                                        <input type="checkbox" class="form-check-input" id="scanTokensAuto" checked>
+                                                        <label class="form-check-label" for="scanTokensAuto">Scan for ERC-20 Token Balances</label>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-12">
+                                                    <button type="submit" class="btn btn-primary">Start Auto Scanning</button>
+                                                    <button type="button" id="stopScanBtn" class="btn btn-danger d-none">Stop Scanning</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        
+                                        <div class="mt-4">
+                                            <div class="progress mb-3 d-none" id="scanProgressContainer">
+                                                <div id="scanProgress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                                            </div>
+                                            
+                                            <div id="autoScanStatus" class="alert alert-info d-none">
+                                                <div class="scan-status-header">
+                                                    <p><strong>Status:</strong> <span id="statusText">Preparing to scan...</span></p>
+                                                    <p class="mb-0"><strong>Current combination:</strong> <span id="currentCombination"></span></p>
+                                                    <p class="mb-0"><strong>Combinations checked:</strong> <span id="combinationsChecked">0</span> / <span id="totalCombinations">0</span></p>
+                                                </div>
+                                                <!-- Detailed wallet information will be added here dynamically -->
+                                            </div>
+                                            
+                                            <div id="foundWalletsContainer" class="d-none">
+                                                <h5 class="mt-4 mb-3">Found Wallet with Balance</h5>
+                                                <div class="alert alert-warning mb-3">
+                                                    <i class="bi bi-shield-exclamation me-2"></i>
+                                                    <strong>Security Warning:</strong> Private keys provide full access to your cryptocurrency. Never share them with anyone.
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped table-hover" id="foundWalletsTable">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Mnemonic</th>
+                                                                <th>Address</th>
+                                                                <th>Balance (ETH)</th>
+                                                                <th>Tx Count</th>
+                                                                <th>Private Key</th>
+                                                                <th>Derivation Path</th>
+                                                                <th>Actions</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="foundWallets">
+                                                            <!-- Found wallets will be inserted here -->
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="alert alert-success mt-3">
+                                                    <p class="mb-1"><i class="bi bi-check-circle-fill me-2"></i><strong>Success!</strong> Found a wallet with balance.</p>
+                                                    <p class="mb-0">You can use the buttons above to use this mnemonic for a full scan or copy it to clipboard.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Offline Target Scan Tab -->
+                            <div class="tab-pane fade" id="target" role="tabpanel" aria-labelledby="target-tab">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Offline Target Scan - Find Mnemonic for Specific Address</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="text-muted mb-3">
+                                            Enter a specific Ethereum wallet address you want to find. The system will generate and check mnemonics
+                                            until it finds one that generates the target address. This process runs entirely in your browser.
+                                        </p>
+                                        
+                                        <form id="targetScanForm">
+                                            <div class="row">
+                                                <div class="col-md-12 mb-3">
+                                                    <label for="targetAddress" class="form-label required-field">Target Ethereum Address</label>
+                                                    <input type="text" class="form-control" id="targetAddress" 
+                                                        placeholder="0x..." required>
+                                                    <small class="form-text text-muted">Enter the Ethereum address you want to find the mnemonic for</small>
+                                                </div>
+                                                
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="wordCountTarget" class="form-label">Mnemonic Word Count</label>
+                                                    <select id="wordCountTarget" class="form-select">
+                                                        <option value="12">12 Words</option>
+                                                        <option value="24">24 Words</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="derivationPathType" class="form-label">Derivation Path</label>
+                                                    <select id="derivationPathType" class="form-select">
+                                                        <optgroup label="Ethereum Wallets">
+                                                            <option value="ethereum" selected>Ethereum (m/44'/60'/0'/0/x)</option>
+                                                            <option value="metamask">MetaMask (m/44'/60'/0'/0/x)</option>
+                                                            <option value="coinbase">Coinbase Wallet (m/44'/60'/0'/0/x)</option>
+                                                            <option value="trust_wallet">Trust Wallet (m/44'/60'/0'/0/x)</option>
+                                                            <option value="exodus">Exodus (m/44'/60'/0'/0/x)</option>
+                                                            <option value="brave_wallet">Brave Wallet (m/44'/60'/0'/0/x)</option>
+                                                            <option value="ethereum_ledger">Ethereum Ledger (m/44'/60'/0'/x)</option>
+                                                            <option value="ethereum_ledger_live">Ethereum Ledger Live (m/44'/60'/x'/0/0)</option>
+                                                            <option value="ethereum_trezor">Ethereum Trezor (m/44'/60'/0'/0/x)</option>
+                                                            <option value="myetherwallet">MyEtherWallet (m/44'/60'/0'/x)</option>
+                                                        </optgroup>
+                                                        <optgroup label="Solana Wallets">
+                                                            <option value="phantom">Phantom (m/44'/501'/0'/0/x)</option>
+                                                            <option value="solflare">Solflare (m/44'/501'/0'/x)</option>
+                                                            <option value="sollet">Sollet (m/44'/501'/x'/0/0)</option>
+                                                        </optgroup>
+                                                        <optgroup label="Other Cryptocurrencies">
+                                                            <option value="binance">Binance Chain (m/44'/714'/0'/0/x)</option>
+                                                            <option value="bitcoin">Bitcoin (m/44'/0'/0'/0/x)</option>
+                                                            <option value="bitcoin_legacy">Bitcoin Legacy (m/44'/0'/0'/x)</option>
+                                                            <option value="litecoin">Litecoin (m/44'/2'/0'/0/x)</option>
+                                                            <option value="dogecoin">Dogecoin (m/44'/3'/0'/0/x)</option>
+                                                            <option value="ripple">Ripple (m/44'/144'/0'/0/x)</option>
+                                                            <option value="cardano">Cardano (m/1852'/1815'/0'/0/x)</option>
+                                                            <option value="polkadot">Polkadot (m/44'/354'/0'/0/x)</option>
+                                                        </optgroup>
+                                                        <option value="custom">Custom Path</option>
+                                                    </select>
+                                                    <div id="customPathContainer" class="mt-2 d-none">
+                                                        <input type="text" class="form-control" id="customPath" placeholder="m/44'/60'/0'/0/0">
+                                                        <small class="form-text text-muted">Enter custom derivation path with 'x' as the variable index</small>
+                                                    </div>
+                                                    <div class="mt-2">
+                                                        <label for="derivationPathIndex" class="form-label">Index (x)</label>
+                                                        <input type="number" class="form-control" id="derivationPathIndex" min="0" max="100" value="0">
+                                                        <small class="form-text text-muted">The index value to replace 'x' in the path</small>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-md-12 mb-3">
+                                                    <label class="form-label">Mnemonic Template (Optional)</label>
+                                                    <p class="text-muted small mb-2">
+                                                        Enter known words in your mnemonic and use "_" (underscore) for unknown words. 
+                                                        The system will try different combinations for the unknown words.
+                                                    </p>
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <button type="button" id="createTargetTemplateBtn" class="btn btn-outline-secondary">Create Template</button>
+                                                        <button type="button" id="clearTargetTemplateBtn" class="btn btn-outline-danger ms-2">Clear Template</button>
+                                                    </div>
+                                                    <div id="targetMnemonicTemplate" class="d-none">
+                                                        <!-- Word inputs will be generated here -->
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-md-12 mb-3">
+                                                    <div class="form-check">
+                                                        <input type="checkbox" class="form-check-input" id="checkAllIndexes" checked>
+                                                        <label class="form-check-label" for="checkAllIndexes">Check first 20 address indexes</label>
+                                                        <small class="form-text text-muted d-block">If enabled, will check addresses at multiple derivation path indexes</small>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-md-12 mb-3">
+                                                    <label for="maxAttemptsTarget" class="form-label">Maximum Attempts</label>
+                                                    <input type="number" class="form-control" id="maxAttemptsTarget" min="1000" value="1000000">
+                                                    <small class="form-text text-muted">Limit the number of attempts (higher values may slow down your browser)</small>
+                                                </div>
+                                                
+                                                <div class="col-12">
+                                                    <button type="submit" class="btn btn-primary">Start Target Scanning</button>
+                                                    <button type="button" id="stopTargetScanBtn" class="btn btn-danger d-none">Stop Scanning</button>
+                                                    <button type="button" id="enableDebugBtn" class="btn btn-outline-secondary">Enable Debug Mode</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        
+                                        <div class="mt-4">
+                                            <div class="progress mb-3 d-none" id="targetScanProgressContainer">
+                                                <div id="targetScanProgress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                                            </div>
+                                            
+                                            <div id="targetScanStatus" class="alert alert-info d-none">
+                                                <div class="scan-status-header">
+                                                    <p><strong>Status:</strong> <span id="targetStatusText">Preparing to scan...</span></p>
+                                                    <p class="mb-0"><strong>Current attempt:</strong> <span id="currentAttempt">0</span> / <span id="maxAttempts">0</span></p>
+                                                    <p class="mb-0"><strong>Current mnemonic:</strong> <span id="currentTargetMnemonic" class="text-monospace"></span></p>
+                                                </div>
+                                                <div id="debugInfo" class="mt-3 d-none">
+                                                    <hr>
+                                                    <p><strong>Debug Information:</strong></p>
+                                                    <pre id="debugOutput" class="bg-light p-2 rounded" style="max-height: 150px; overflow: auto;"></pre>
+                                                    <button id="toggleDebugBtn" class="btn btn-sm btn-outline-secondary">Hide Debug Info</button>
+                                                </div>
+                                            </div>
+                                            
+                                            <div id="targetFoundContainer" class="d-none">
+                                                <h5 class="mt-4 mb-3">Found Matching Wallet!</h5>
+                                                <div class="alert alert-success mb-3">
+                                                    <i class="bi bi-check-circle-fill me-2"></i>
+                                                    <strong>Success!</strong> Found a mnemonic that generates the target address.
+                                                </div>
+                                                <div class="card border-success">
+                                                    <div class="card-header bg-success text-white">
+                                                        <h6 class="mb-0">Matching Wallet Details</h6>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-md-12 mb-3">
+                                                                <label class="form-label"><strong>Mnemonic Phrase:</strong></label>
+                                                                <div class="alert alert-warning">
+                                                                    <i class="bi bi-shield-exclamation me-2"></i>
+                                                                    <strong>Security Warning:</strong> This mnemonic provides full access to the wallet. Never share it with anyone.
+                                                                </div>
+                                                                <div class="p-3 bg-light rounded border">
+                                                                    <p id="foundMnemonic" class="mb-0 user-select-all text-monospace"></p>
+                                                                </div>
+                                                                <div class="mt-2">
+                                                                    <button id="copyFoundMnemonic" class="btn btn-sm btn-secondary">
+                                                                        <i class="bi bi-clipboard"></i> Copy Mnemonic
+                                                                    </button>
+                                                                    <button id="useFoundMnemonic" class="btn btn-sm btn-success">
+                                                                        <i class="bi bi-arrow-right-circle"></i> Use for Full Scan
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 mb-3">
+                                                                <label class="form-label"><strong>Address:</strong></label>
+                                                                <p id="foundAddress" class="text-monospace user-select-all"></p>
+                                                            </div>
+                                                            <div class="col-md-6 mb-3">
+                                                                <label class="form-label"><strong>Derivation Path:</strong></label>
+                                                                <p id="foundDerivationPath" class="text-monospace"></p>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <label class="form-label"><strong>Private Key:</strong></label>
+                                                                <div class="alert alert-warning">
+                                                                    <i class="bi bi-shield-exclamation me-2"></i>
+                                                                    <strong>Security Warning:</strong> This private key provides full access to the wallet. Never share it with anyone.
+                                                                </div>
+                                                                <div class="p-3 bg-light rounded border">
+                                                                    <p id="foundPrivateKey" class="mb-0 user-select-all text-monospace"></p>
+                                                                </div>
+                                                                <div class="mt-2">
+                                                                    <button id="copyFoundPrivateKey" class="btn btn-sm btn-secondary">
+                                                                        <i class="bi bi-clipboard"></i> Copy Private Key
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Regular Scan Results Table -->
+                        <div id="resultsSection" style="display: none;">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Wallet Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="alert alert-warning mb-3">
+                                        <i class="bi bi-shield-exclamation me-2"></i>
+                                        <strong>Security Warning:</strong> Private keys provide full access to your cryptocurrency. Never share them with anyone.
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Index</th>
+                                                    <th>Address</th>
+                                                    <th>Balance (ETH)</th>
+                                                    <th>Tx Count</th>
+                                                    <th>Private Key</th>
+                                                    <th>Derivation Path</th>
+                                                    <th>Token Balances</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="walletResults">
+                                                <!-- Results will be inserted here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="loadingSpinner" class="text-center my-5" style="display: none;">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Scanning wallet addresses... This may take a moment.</p>
+                        </div>
+                        
+                        <div id="errorAlert" class="alert alert-danger mt-3" style="display: none;">
+                            <i class="bi bi-exclamation-triangle-fill"></i> <span id="errorMessage"></span>
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted">
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <p class="mb-0">
+                                    <small>© 2025 Onur Altun. All Rights Reserved. | 
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">About Altunigma v1.0.1 [Beta]</a> | 
+                                    <a href="mailto:petabyte64@gmail.com">Contact</a>
+                                    </small>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Modal -->
+    <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="aboutModalLabel">Altunigma v1.0.1 [Beta]</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" id="aboutTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="about-tab" data-bs-toggle="tab" data-bs-target="#about-content" 
+                                type="button" role="tab" aria-controls="about-content" aria-selected="true">About</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="disclaimer-tab" data-bs-toggle="tab" data-bs-target="#disclaimer-content" 
+                                type="button" role="tab" aria-controls="disclaimer-content" aria-selected="false">Disclaimer</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="privacy-tab" data-bs-toggle="tab" data-bs-target="#privacy-content" 
+                                type="button" role="tab" aria-controls="privacy-content" aria-selected="false">Privacy Policy</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="legal-tab" data-bs-toggle="tab" data-bs-target="#legal-content" 
+                                type="button" role="tab" aria-controls="legal-content" aria-selected="false">Legal Notes</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-content" 
+                                type="button" role="tab" aria-controls="contact-content" aria-selected="false">Contact</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="donations-tab" data-bs-toggle="tab" data-bs-target="#donations-content" 
+                                type="button" role="tab" aria-controls="donations-content" aria-selected="false">Donations</button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content pt-3" id="aboutTabsContent">
+                        <!-- About Tab -->
+                        <div class="tab-pane fade show active" id="about-content" role="tabpanel" aria-labelledby="about-tab">
+                            <h4>About Altunigma v1.0.1 [Beta]</h4>
+                            <p><strong>Altunigma</strong> is a powerful cryptocurrency wallet scanning and recovery tool developed by Onur Altun. This advanced blockchain utility helps users generate, scan, and recover crypto wallets across multiple blockchains including Ethereum, Bitcoin, Binance Chain, and more.</p>
+                            
+                            <h5>Key Features:</h5>
+                            <ul>
+                                <li><strong>Mnemonic Phrase Generation:</strong> Create secure 12 or 24-word mnemonic phrases for new cryptocurrency wallets</li>
+                                <li><strong>Wallet Scanning:</strong> Scan existing mnemonic phrases to view addresses, balances, and transaction counts</li>
+                                <li><strong>Auto Recovery:</strong> Find missing words in partial mnemonic phrases through intelligent scanning</li>
+                                <li><strong>Target Address Scanning:</strong> Offline scanning to find mnemonics that generate specific target addresses</li>
+                                <li><strong>Multi-Cryptocurrency Support:</strong> Check balances across Ethereum, Bitcoin, Binance Chain, Solana, and other major blockchains</li>
+                                <li><strong>ERC-20 Token Balance Checking:</strong> View balances of Ethereum-based tokens in your wallet</li>
+                                <li><strong>Secure Local Processing:</strong> All operations run in your browser for maximum security and privacy</li>
+                            </ul>
+                            
+                            <p>This application is designed for educational and research purposes only. Always keep your private keys and mnemonic phrases secure.</p>
+                            <p class="mb-0 text-muted">Developed by Onur Altun - Computer Programmer & Computer Science Enthusiast</p>
+                        </div>
+                        
+                        <!-- Disclaimer Tab -->
+                        <div class="tab-pane fade" id="disclaimer-content" role="tabpanel" aria-labelledby="disclaimer-tab">
+                            <h5>Disclaimer</h5>
+                            <p>The Altunigma application is provided "as is" without warranty of any kind, either express or implied, including but not limited to the implied warranties of merchantability, fitness for a particular purpose, or non-infringement.</p>
+                            <p>This tool is designed for educational and research purposes only. The user assumes all responsibility and risk for the use of this software. The creator is not responsible for any loss of funds, data breaches, or other damages that may occur from using this application.</p>
+                            <p>Cryptocurrency transactions are irreversible. Always double-check addresses before sending any funds. Never share your private keys or mnemonic phrases with anyone.</p>
+                            <p>By using this application, you acknowledge that you understand these risks and agree to use the tool responsibly and at your own risk.</p>
+                        </div>
+                        
+                        <!-- Privacy Policy Tab -->
+                        <div class="tab-pane fade" id="privacy-content" role="tabpanel" aria-labelledby="privacy-tab">
+                            <h5>Privacy Policy</h5>
+                            <p>Altunigma is committed to protecting your privacy. This Privacy Policy explains how we handle any information collected or processed while you use our application.</p>
+                            <p><strong>Data Collection:</strong> Altunigma operates entirely in your browser and does not store or transmit your private keys, mnemonic phrases, or wallet addresses to any external servers. All sensitive operations are performed locally on your device.</p>
+                            <p><strong>Third-Party Services:</strong> This application may use third-party APIs (such as Infura) to retrieve blockchain data. These services may collect certain information such as IP addresses and request metadata. Please refer to their respective privacy policies for more information.</p>
+                            <p><strong>Cookies:</strong> Altunigma does not use cookies or similar tracking technologies.</p>
+                            <p><strong>Changes to Privacy Policy:</strong> We may update this Privacy Policy from time to time. Any changes will be reflected in the application with the updated version.</p>
+                        </div>
+                        
+                        <!-- Legal Notes Tab -->
+                        <div class="tab-pane fade" id="legal-content" role="tabpanel" aria-labelledby="legal-tab">
+                            <h5>Legal Notes</h5>
+                            <p><strong>Intellectual Property:</strong> Altunigma, including its code, design, and content, is protected by copyright and other intellectual property laws. All rights are reserved by Onur Altun.</p>
+                            <p><strong>Open Source Components:</strong> This application may incorporate open-source software components. All such components are used in accordance with their respective licenses.</p>
+                            <p><strong>Compliance:</strong> Users are responsible for ensuring their use of this application complies with all applicable laws and regulations in their jurisdiction. Cryptocurrency regulations vary by country and region.</p>
+                            <p><strong>Termination:</strong> We reserve the right to terminate or restrict access to this application for any user who violates these terms or uses the application for illegal purposes.</p>
+                            <p><strong>Governing Law:</strong> These terms and your use of the application shall be governed by and construed in accordance with applicable laws.</p>
+                        </div>
+                        
+                        <!-- Contact Tab -->
+                        <div class="tab-pane fade" id="contact-content" role="tabpanel" aria-labelledby="contact-tab">
+                            <h5>Contact Information</h5>
+                            <p>If you have any questions, feedback, or need assistance with Altunigma, please feel free to contact us:</p>
+                            
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h6><i class="bi bi-envelope"></i> Email</h6>
+                                    <p class="mb-0"><a href="mailto:petabyte64@gmail.com">petabyte64@gmail.com</a></p>
+                                </div>
+                            </div>
+                            
+                            <p>We welcome your feedback and are committed to improving Altunigma based on user suggestions. Please allow 1-2 business days for a response to your inquiry.</p>
+                            
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i> For security reasons, never share your private keys or mnemonic phrases when contacting us. We will never ask for this information.
+                            </div>
+                        </div>
+                        
+                        <!-- Donations Tab -->
+                        <div class="tab-pane fade" id="donations-content" role="tabpanel" aria-labelledby="donations-tab">
+                            <h5 class="text-center mb-4">--Donations--</h5>
+                            <p>If you find Altunigma useful and would like to support its development, please consider making a donation. Your support helps maintain and improve this tool.</p>
+                            
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Cryptocurrency</th>
+                                            <th>Address</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>BTC</strong> (Bitcoin)</td>
+                                            <td class="text-break user-select-all">bc1qj224dp8zcpvh0mc5qvwlu53u7vhsl3qef9yz2c</td>
+                                            <td><button class="btn btn-sm btn-outline-secondary copy-btn" data-address="bc1qj224dp8zcpvh0mc5qvwlu53u7vhsl3qef9yz2c">Copy</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>ETH</strong> (Ethereum)</td>
+                                            <td class="text-break user-select-all">0xCcEd5136D711238c4d8089285BcB6BE282a46315</td>
+                                            <td><button class="btn btn-sm btn-outline-secondary copy-btn" data-address="0xCcEd5136D711238c4d8089285BcB6BE282a46315">Copy</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>DOT</strong> (Polkadot)</td>
+                                            <td class="text-break user-select-all">15ZgdnmYPsdYk5Z2oatj58Rxop8ZJV4qboLVvviv1bqCBUFG</td>
+                                            <td><button class="btn btn-sm btn-outline-secondary copy-btn" data-address="15ZgdnmYPsdYk5Z2oatj58Rxop8ZJV4qboLVvviv1bqCBUFG">Copy</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>TRX</strong> (Tron)</td>
+                                            <td class="text-break user-select-all">TGf4Kgvx9rmj9vqjWajEQEevGcEGwWWrvF</td>
+                                            <td><button class="btn btn-sm btn-outline-secondary copy-btn" data-address="TGf4Kgvx9rmj9vqjWajEQEevGcEGwWWrvF">Copy</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>SOL</strong> (Solana)</td>
+                                            <td class="text-break user-select-all">3wLYGco5ybKob6LeaN2XT1nfdzFr4N9egFqmiXueueWU</td>
+                                            <td><button class="btn btn-sm btn-outline-secondary copy-btn" data-address="3wLYGco5ybKob6LeaN2XT1nfdzFr4N9egFqmiXueueWU">Copy</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>BNB</strong> (Binance Coin)</td>
+                                            <td class="text-break user-select-all">0xCcEd5136D711238c4d8089285BcB6BE282a46315</td>
+                                            <td><button class="btn btn-sm btn-outline-secondary copy-btn" data-address="0xCcEd5136D711238c4d8089285BcB6BE282a46315">Copy</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>XRP</strong> (Ripple)</td>
+                                            <td class="text-break user-select-all">rDM7BrvfoKKiwQSgV7qGCConA137AyzmRC</td>
+                                            <td><button class="btn btn-sm btn-outline-secondary copy-btn" data-address="rDM7BrvfoKKiwQSgV7qGCConA137AyzmRC">Copy</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="alert alert-success copy-alert mt-2" style="display: none;">
+                                Address copied to clipboard!
+                            </div>
+                            <p class="text-center mt-3">Thank you for your support!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Module shim for browser compatibility -->
+    <script>
+        // Create shims for Node.js modules
+        window.module = window.module || {};
+        window.require = function(module) {
+            // Return empty objects for required modules
+            return {};
+        };
+        window.exports = window.exports || {};
+        window.global = window.global || window;
+        window.process = window.process || { env: {} };
+        
+        // Polyfill for Buffer if not available
+        if (typeof window.Buffer === 'undefined') {
+            window.Buffer = function() {};
+            window.Buffer.from = function() { return []; };
+            window.Buffer.alloc = function() { return []; };
+        }
+    </script>
+    
+    <!-- Fallback implementation in case CDN libraries fail -->
+    <script src="<%= basePath %>/js/crypto-fallback.js"></script>
+    
+    <!-- Try loading external libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bip39@3.0.4/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethereumjs-util@7.1.5/dist/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hdkey@2.0.1/lib/hdkey.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethereumjs-wallet@1.0.2/dist/index.min.js"></script>
+    
+    <script src="<%= basePath %>/js/app.js"></script>
+
+    <!-- Add this script at the end of the file, just before the closing </body> tag -->
+    <script>
+        // Copy donation address to clipboard
+        document.addEventListener('DOMContentLoaded', function() {
+            const copyButtons = document.querySelectorAll('.copy-btn');
+            const copyAlert = document.querySelector('.copy-alert');
+            
+            copyButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const address = this.getAttribute('data-address');
+                    navigator.clipboard.writeText(address).then(() => {
+                        copyAlert.style.display = 'block';
+                        setTimeout(() => {
+                            copyAlert.style.display = 'none';
+                        }, 2000);
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

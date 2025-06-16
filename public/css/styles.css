@@ -1,0 +1,278 @@
+/* Custom styles for Wallet Scanner */
+
+body {
+    background-color: #f8f9fa;
+}
+
+.card {
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.card-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.user-select-all {
+    user-select: all;
+}
+
+.table th {
+    font-weight: 600;
+}
+
+.address-cell {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.token-badge {
+    display: inline-block;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 5px 8px;
+    border-radius: 4px;
+    background-color: #e9ecef;
+    font-size: 0.85rem;
+}
+
+.copy-btn {
+    cursor: pointer;
+    color: #6c757d;
+    transition: color 0.2s;
+}
+
+.copy-btn:hover {
+    color: #212529;
+}
+
+.bg-primary {
+    background-color: #3498db !important;
+}
+
+.btn-primary {
+    background-color: #3498db;
+    border-color: #3498db;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+}
+
+.alert-info {
+    background-color: #e8f4f8;
+    border-color: #d1e7f0;
+    color: #0c5460;
+}
+
+/* Auto Scanner Styles */
+.nav-tabs .nav-link {
+    color: #495057;
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.nav-tabs .nav-link.active {
+    color: #3498db;
+    font-weight: 500;
+}
+
+.word-input {
+    font-family: monospace;
+}
+
+.progress {
+    height: 0.75rem;
+    border-radius: 0.5rem;
+}
+
+.text-truncate {
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#currentCombination {
+    font-family: monospace;
+    word-break: break-all;
+    font-weight: 500;
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+
+#foundWalletsTable .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+#foundWalletsTable .text-truncate {
+    max-width: 200px;
+    display: block;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.alert-success i {
+    color: #28a745;
+}
+
+/* Error and warning styles */
+.text-danger {
+    color: #dc3545 !important;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffecb5;
+    color: #856404;
+}
+
+.bi-exclamation-triangle-fill {
+    cursor: help;
+}
+
+/* Required field indicator */
+.required-field::after {
+    content: " *";
+    color: #dc3545;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .table {
+        font-size: 0.9rem;
+    }
+    
+    .nav-tabs .nav-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+    }
+}
+
+.private-key-cell {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: monospace;
+    font-size: 0.85rem;
+}
+
+.bi-shield-exclamation {
+    color: #856404;
+}
+
+.text-monospace {
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.85rem;
+}
+
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+.rounded {
+    border-radius: 0.25rem !important;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #dee2e6 !important;
+}
+
+/* Auto scanner wallet details */
+#autoScanStatus .text-truncate {
+    max-width: 300px;
+}
+
+#autoScanStatus .bi-info-circle {
+    color: #17a2b8;
+}
+
+.scan-status-header {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.wallet-details-container {
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.wallet-details-container h6 {
+    color: #17a2b8;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding-bottom: 0.5rem;
+}
+
+#autoScanStatus {
+    max-height: none;
+    overflow: visible;
+}
+
+/* Copyright footer styling */
+.card-footer hr {
+    margin: 0.5rem 0;
+    opacity: 0.2;
+}
+
+.card-footer .text-center small {
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Target Scan Styles */
+#targetScanStatus {
+    max-height: none;
+    overflow: visible;
+}
+
+#currentTargetMnemonic {
+    word-break: break-all;
+    font-size: 0.9rem;
+}
+
+.border-success {
+    border-color: #28a745 !important;
+}
+
+.bg-success {
+    background-color: #28a745 !important;
+}
+
+#targetFoundContainer .card-body {
+    padding: 1.5rem;
+}
+
+#foundMnemonic, #foundPrivateKey {
+    word-break: break-all;
+    font-family: monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+#foundAddress, #foundDerivationPath {
+    word-break: break-all;
+    font-family: monospace;
+    font-size: 0.9rem;
+} 
